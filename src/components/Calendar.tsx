@@ -1,16 +1,48 @@
 import React from "react";
 import * as dateFns from "date-fns";
-import { ru, uk } from 'date-fns/locale'
+import { uk } from 'date-fns/locale';
+import API from '../api/api';
+import { bindActionCreators, Dispatch } from "redux";
+import { gamesDataSelector } from "../selectors";
+import { connect } from "react-redux";
+import {recordData} from '../store/initStore';
 
-class Calendar extends React.Component {
+interface IProps {
+  recordData: any;
+  gamesData: any;
+}
+interface IState {
+  currentMonth: Date,
+  selectedDate: Date,
+  currentLocale: any,
+  days: any[],
+  rows: any[],
+}
+class Calendar  extends React.Component<IProps, IState> {
   state = {
     currentMonth: new Date(),
     selectedDate: new Date(),
     currentLocale: uk,
+    days: [],
+    rows: [],
   };
 
+  componentDidMount() {
+    this.fillDays();
+    console.log('mount');
+  }
+
+  componentDidUpdate(prevProps: IProps, prevState: IState) {
+    const {currentMonth} = this.state;
+    console.log('state', this.state);
+
+    if (currentMonth !== prevState.currentMonth) {
+      API.requestMonthGames(currentMonth);
+    }
+  }
+
   renderHeader() {
-    const dateFormat = "MMMM yyyy";
+    const dateFormat = "LLLL yyyy";
     const {currentLocale} = this.state;
 
     return (
@@ -30,23 +62,34 @@ class Calendar extends React.Component {
     );
   }
 
-  renderDays() {
+  fillDays = () => {
     const {currentLocale} = this.state;
-
     const dateFormat = "iiii";
-    const days = [];
-
+    const currentDays = [];
+  
     let startDate = dateFns.startOfWeek(this.state.currentMonth);
 
     for (let i = 0; i < 7; i++) {
-      days.push(
-        <div className="col col-center" key={i}>
-          {dateFns.format(dateFns.addDays(startDate, i), dateFormat, {locale: currentLocale})}
-        </div>
+      currentDays.push(
+        dateFns.format(dateFns.addDays(startDate, i), dateFormat, {locale: currentLocale})
       );
     }
 
-    return <div className="days row">{days}</div>;
+    this.setState({days: currentDays});
+  }
+
+  renderDays() {
+    const {days} = this.state;
+
+    return (
+    <div className="days row">
+      {days.length > 0 && days.map(item => (
+        <div className="col col-center" key={String(item)}>
+          {item}
+        </div>
+      ))}
+    </div>
+    );
   }
 
   renderCells() {
@@ -60,6 +103,7 @@ class Calendar extends React.Component {
     const rows = [];
 
     let days = [];
+    const daysLog = [];
     let day = startDate;
     let formattedDate = "";
 
@@ -67,6 +111,7 @@ class Calendar extends React.Component {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
         const cloneDay = day;
+        daysLog.push(formattedDate);
         days.push(
           <div
             className={`col cell ${
@@ -86,6 +131,7 @@ class Calendar extends React.Component {
             <span className="bg">{formattedDate}</span>
           </div>
         );
+        
         day = dateFns.addDays(day, 1);
       }
       rows.push(
@@ -116,9 +162,23 @@ class Calendar extends React.Component {
     });
   };
 
+  test = async () => {
+    // const {currentMonth} = this.state;
+    const res = await API.test();
+    console.log(res);
+    
+    
+  }
+
   render() {
     return (
       <div className="calendar">
+        <button
+          style={{height: '20px'}}
+          onClick={this.test}
+        >
+          <span>TEST</span>
+        </button>
         {this.renderHeader()}
         {this.renderDays()}
         {this.renderCells()}
@@ -127,4 +187,12 @@ class Calendar extends React.Component {
   }
 }
 
-export default Calendar;
+const mapStateToProps = (state: any) => ({
+  gamesData: gamesDataSelector(state),
+})
+
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
+  recordData,
+}, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Calendar);

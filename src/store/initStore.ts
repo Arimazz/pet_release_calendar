@@ -1,25 +1,41 @@
-import { createSlice, configureStore } from '@reduxjs/toolkit'
+import { createSlice, configureStore, combineReducers } from '@reduxjs/toolkit'
 
-const counterSlice = createSlice({
-  name: 'counter',
-  initialState: {
-    value: 0
-  },
+interface IGamesData {
+  data: any,
+  meta: any,
+}
+
+export const gamesDataInitState: IGamesData = {
+  data: null,
+  meta: null,
+}
+
+const gamesDataSlice = createSlice({
+  name: 'gameData',
+  initialState: gamesDataInitState,
   reducers: {
-    incremented: state => {
-      state.value += 1
+    recordData: (state, payload: any) => {
+      const {count, next, previous, results} = payload.data;
+
+      state.data = results;
+      state.meta = {
+        count,
+        next,
+        previous
+      }
     },
-    decremented: state => {
-      state.value -= 1
-    }
   }
 })
 
-export const { incremented, decremented } = counterSlice.actions;
+const combinedReducers = combineReducers({
+  gamesData: gamesDataSlice.reducer,
+})
+
+export const {recordData} = gamesDataSlice.actions;
 
 export const store = configureStore({
-  reducer: counterSlice.reducer
+  reducer: combinedReducers,
 })
 
 // Can still subscribe to the store
-store.subscribe(() => console.log(store.getState()))
+console.log(store.getState())
