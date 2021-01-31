@@ -38,4 +38,4 @@ export const store = configureStore({
 })
 
 // Can still subscribe to the store
-console.log(store.getState())
+// console.log(store.getState())

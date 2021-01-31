@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, useEffect, useState } from "react";
 import * as dateFns from "date-fns";
 import { uk } from 'date-fns/locale';
 import API from '../../api/api';
@@ -8,6 +8,9 @@ import { connect } from "react-redux";
 import {recordData} from '../../store/initStore';
 import Header from "./Header";
 import Cells from "./Cells";
+import { RAWG_DATE_FORMAT } from "../../constants/config";
+import usePrevious from "../../hooks/usePrev";
+import { useHistory } from "react-router-dom";
 
 interface IProps {
   recordData: any;
@@ -23,53 +26,44 @@ interface IProps {
 }
 
 export type IDays = IDay[];
-interface IState {
-  currentMonth: Date,
-  selectedDate: Date,
-  currentLocale: Locale,
-  days: any,
-  rows: IDays[],
-  arr: boolean[],
-  isStartLoading: boolean;
-  isFreezing: boolean;
-}
-class Calendar extends React.Component<IProps, IState> {
-  state: IState = {
-    currentMonth: new Date(),
-    selectedDate: new Date(),
-    currentLocale: uk,
-    days: [],
-    rows: [],
-    arr: [false, false, false, false, false],
-    isStartLoading: false,
-    isFreezing: false,
-  };
 
-  componentDidMount() {
-    this.fillDays();
-    this.fillRows();
-  }
+const Calendar: FC<IProps> = () => {
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  // const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [currentLocale] = useState<Locale>(uk);
+  const [days, setDays] = useState<any>([]);
+  const [rows, setRows] = useState<IDays[]>([]);
+  const [isStartLoading, setIsStartLoading] = useState<boolean>(false);
+  const [isFreezing, setIsFreezing] = useState<boolean>(false);
+  const history = useHistory();
 
-  componentDidUpdate(prevProps: IProps, prevState: IState) {
-    const {currentMonth, rows, isStartLoading} = this.state;
-    
+  const previousMonth = usePrevious(currentMonth);
+
+
+  useEffect(() => {
+    fillDays();
+    fillRows();  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!isStartLoading && rows.length > 0) {
-      // this.getMonthData();
-      this.getMonthData();
+      getMonthData()
     }
     
-    if (currentMonth !== prevState.currentMonth) {
-      this.fillDays();
-      this.fillRows();
+    if (currentMonth !== previousMonth) {
+      fillDays();
+      fillRows();
     }
-  }
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentMonth, rows])
 
-  fillDays = () => {
-    const {currentLocale} = this.state;
+  const fillDays = () => {
     const dateFormat = "iiii";
     const currentDays = [];
   
-    let startDate = dateFns.startOfWeek(this.state.currentMonth);
+    let startDate = dateFns.startOfWeek(currentMonth);
 
     for (let i = 0; i < 7; i++) {
       currentDays.push(
@@ -77,11 +71,10 @@ class Calendar extends React.Component<IProps, IState> {
       );
     }
 
-    this.setState({days: currentDays});
+    setDays(currentDays);
   }
 
-  renderDays() {
-    const {days} = this.state;
+  const renderDays = () => {
 
     return (
     <div className="days row">
@@ -94,8 +87,7 @@ class Calendar extends React.Component<IProps, IState> {
     );
   }
 
-  fillRows = () => {
-    const { currentMonth } = this.state;
+  const fillRows = () => {
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
     const startDate = dateFns.startOfWeek(monthStart);
@@ -124,98 +116,88 @@ class Calendar extends React.Component<IProps, IState> {
       rows.push(days);
       days = [];
     }
-    this.setState({rows});
+    setRows(rows)
   };
 
-  getMonthData = async () => {
-    const {rows} = this.state;
-    this.setState({isStartLoading: true, isFreezing: true});
+  const getMonthData = async () => {
+    setIsStartLoading(true);
+    setIsFreezing(true);
+    
+    const res = await API.requestMonthGames(currentMonth);
+    
+    if (res === 'ERROR') {
+      setIsFreezing(false);
+      return new Error('LOADING FAILED')
+    }
 
     for (let findex = 0; findex < rows.length; findex++) {
       const days = rows[findex];
       for (let sindex = 0; sindex < days.length; sindex++) {
         const currentDay = {...days[sindex]};
         if (!currentDay.isDisabled) {
-            const gameData = await API.requestDayGames(currentDay.day);
-            if (gameData !== 'ERROR') {
-              currentDay.isLoading = false;
-              currentDay.data = gameData?.data.results.slice(0,5).map((item: any) => (
-                {name: item.name, isInteresting: item.added > 5})
-              );
-              const tempRows = [...rows];
-              tempRows[findex][sindex] = currentDay;
-              this.setState({rows: tempRows});
-  
-            } else {
-              currentDay.isLoading = false;
-              currentDay.data = [{name: 'ERROR', isInteresting: true}];
-              const tempRows = [...rows];
-              tempRows[findex][sindex] = currentDay;
-              this.setState({rows: tempRows});
-            }
+            currentDay.isLoading = false;
+            currentDay.data = res.filter((item: any) => (
+                dateFns.format(currentDay.day, RAWG_DATE_FORMAT) === item.released
+              )).slice(0,5);
+
+            const tempRows = [...rows];
+            tempRows[findex][sindex] = currentDay;
+            setRows(tempRows);
         }
       }
     }
-    this.setState({isFreezing: false})
+    setIsFreezing(false);
   }
 
-  onDateClick = (day: Date) => {
-    this.setState({
-      selectedDate: day
-    });
+  const onDateClick = (day: string) => {
+    history.push(`/day/:${day}`);
   };
 
-  nextMonth = () => {
-    const {isFreezing} = this.state;
+  const nextMonth = () => {
     if (!isFreezing) {
-      this.setState({
-        currentMonth: dateFns.addMonths(this.state.currentMonth, 1),
-        rows: [],
-        isStartLoading: false,
-        isFreezing: false,
-      });
+      setCurrentMonth(dateFns.addMonths(currentMonth, 1));
+      setRows([]);
+      setIsStartLoading(false);
+      setIsFreezing(false);
     }
   };
 
-  prevMonth = () => {
-    const {isFreezing} = this.state;
+  const prevMonth = () => {
     if (!isFreezing) {
-      this.setState({
-        currentMonth: dateFns.subMonths(this.state.currentMonth, 1),
-        rows: [],
-        isStartLoading: false,
-        isFreezing: false,
-      });
+      setCurrentMonth(dateFns.subMonths(currentMonth, 1));
+      setRows([]);
+      setIsStartLoading(false);
+      setIsFreezing(false);
     }
   };
 
 
 
-  test = async () => {
+  // test = async () => {
+    // const {currentMonth} = this.state;
+    // const res = await API.requestMonthGames(currentMonth);
+    // console.log(res);
+    // this.getMonthData()
+  // }
 
-  }
-
-  render() {
-    const {currentLocale, currentMonth, rows} = this.state;
     return (
       <div className="calendar">
-        <button
+        {/* <button
           style={{height: '20px'}}
           onClick={this.test}
         >
           <span>TEST</span>
-        </button>
+        </button> */}
         <Header
           currentLocale={currentLocale}
           currentMonth={currentMonth}
-          nextMonthCallback={this.nextMonth}
-          prevMonthCallback={this.prevMonth}
+          nextMonthCallback={nextMonth}
+          prevMonthCallback={prevMonth}
         />
-        {this.renderDays()}
-        <Cells rows={rows} />
+        {renderDays()}
+        <Cells rows={rows} onDateClick={onDateClick} />
       </div>
     );
-  }
 }
 
 const mapStateToProps = (state: any) => ({
@@ -226,4 +208,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
   recordData,
 }, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(Calendar);
+
+// const connected = withRouter(<Calendar />);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Calendar)

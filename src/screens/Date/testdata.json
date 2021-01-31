@@ -1,0 +1,42 @@
+{
+  "added": 8,
+  "background_image": "https://media.rawg.io/media/screenshots/69d/69d2f44746384cf1360102fb550ede53.jpg",
+  "clip": null,
+  "community_rating": 0,
+  "dominant_color": "0f0f0f",
+  "esrb_rating": null,
+  "genres": [
+    {
+      "id": 4,
+      "name": "Action",
+      "slug": "action"
+    }
+  ],
+  "id": 536886,
+  "metacritic": null,
+  "name": "The Binding of Isaac: Repentance",
+  "playtime": 0,
+  "rating": 0,
+  "rating_top": 0,
+  "ratings": [],
+  "ratings_count": 0,
+  "released": "2021-01-01",
+  "reviews_count": 0,
+  "reviews_text_count": 0,
+  "saturated_color": "0f0f0f",
+  "score": null,
+  "short_screenshots": [{
+    "id": -1,
+    "image": "https://media.rawg.io/media/screenshots/69d/69d2f44746384cf1360102fb550ede53.jpg"
+  }],
+  "slug": "the-binding-of-isaac-repentance",
+  "stores": [{
+    "id": 1,
+    "name": "Steam",
+    "slug": "steam"
+    }],
+  "suggestions_count": 0,
+  "tba": false,
+  "updated": "2020-12-25T10:52:55",
+  "user_game": null
+}

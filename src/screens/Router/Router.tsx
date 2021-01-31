@@ -6,13 +6,17 @@ import {
   Redirect,
 } from "react-router-dom";
 import Main from '../App/App';
+import DateScreen from "../Date/DateScreen";
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path='/'>
+        <Route exact path='/'>
           <Main />
+        </Route>
+        <Route path='/day/:currentDate'>
+          <DateScreen />
         </Route>
 
         <Redirect to={'/'} />

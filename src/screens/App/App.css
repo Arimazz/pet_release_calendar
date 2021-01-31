@@ -173,10 +173,11 @@ main {
   cursor: pointer;
   background: var(--neutral-color);
   transition: 0.25s ease-out;
+  padding-top: 15px;
 }
 
 .calendar .body .cell:hover {
-  background: var(--bg-color);
+  background: beige;
   transition: 0.5s ease-out;
 }
 
@@ -202,8 +203,8 @@ main {
   position: absolute;
   font-size: 82.5%;
   line-height: 1;
-  top: .75em;
-  right: .75em;
+  top: 5px;
+  right: 5px;
   font-weight: 700;
 }
 
