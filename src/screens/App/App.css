@@ -108,6 +108,14 @@ main {
   text-align: center;
 }
 
+.loading-wrap {
+}
+
+.loading {
+  /* margin-left: auto; */
+  margin-right: auto;
+}
+
 .col-end {
   justify-content: flex-end;
   text-align: right;
@@ -162,7 +170,7 @@ main {
 
 .calendar .body .cell {
   position: relative;
-  height: 6em;
+  min-height: 6em;
   border-right: 1px solid var(--border-color);
   overflow: hidden;
   cursor: pointer;
@@ -233,4 +241,16 @@ main {
 
 .calendar-wrap {
   padding: 20px;
+}
+
+.game-title {
+  font-weight: 500;
+  line-height: 20px;
+  font-size: 16px;
+  color: #777;
+}
+
+.game-title-heavy {
+  font-weight: bold;
+  color: #000;
 }
