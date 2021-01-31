@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import * as dateFns from "date-fns";
-import Loading from '../Loading/Loading';
 
 const dateFormat = "LLLL yyyy";
 
