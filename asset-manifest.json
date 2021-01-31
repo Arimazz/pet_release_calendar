@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/pet_release_calendar/static/css/main.4b63bfc8.chunk.css",
-    "main.js": "/pet_release_calendar/static/js/main.0d3af778.chunk.js",
-    "main.js.map": "/pet_release_calendar/static/js/main.0d3af778.chunk.js.map",
+    "main.css": "/pet_release_calendar/static/css/main.8f395d66.chunk.css",
+    "main.js": "/pet_release_calendar/static/js/main.56853ee0.chunk.js",
+    "main.js.map": "/pet_release_calendar/static/js/main.56853ee0.chunk.js.map",
     "runtime-main.js": "/pet_release_calendar/static/js/runtime-main.d6dd8f6b.js",
     "runtime-main.js.map": "/pet_release_calendar/static/js/runtime-main.d6dd8f6b.js.map",
-    "static/js/2.5bfc83b7.chunk.js": "/pet_release_calendar/static/js/2.5bfc83b7.chunk.js",
-    "static/js/2.5bfc83b7.chunk.js.map": "/pet_release_calendar/static/js/2.5bfc83b7.chunk.js.map",
+    "static/js/2.1990a427.chunk.js": "/pet_release_calendar/static/js/2.1990a427.chunk.js",
+    "static/js/2.1990a427.chunk.js.map": "/pet_release_calendar/static/js/2.1990a427.chunk.js.map",
     "index.html": "/pet_release_calendar/index.html",
-    "static/css/main.4b63bfc8.chunk.css.map": "/pet_release_calendar/static/css/main.4b63bfc8.chunk.css.map",
-    "static/js/2.5bfc83b7.chunk.js.LICENSE.txt": "/pet_release_calendar/static/js/2.5bfc83b7.chunk.js.LICENSE.txt"
+    "static/css/main.8f395d66.chunk.css.map": "/pet_release_calendar/static/css/main.8f395d66.chunk.css.map",
+    "static/js/2.1990a427.chunk.js.LICENSE.txt": "/pet_release_calendar/static/js/2.1990a427.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.d6dd8f6b.js",
-    "static/js/2.5bfc83b7.chunk.js",
-    "static/css/main.4b63bfc8.chunk.css",
-    "static/js/main.0d3af778.chunk.js"
+    "static/js/2.1990a427.chunk.js",
+    "static/css/main.8f395d66.chunk.css",
+    "static/js/main.56853ee0.chunk.js"
   ]
 }
