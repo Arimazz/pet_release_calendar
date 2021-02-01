@@ -84,7 +84,7 @@ const DateScreen = () => {
       </header>
       <div className="calendar-wrap">
         <div className="heading-wrap">
-          <h2 className="date-title">
+          <h2 className="game-title-date">
             {currentDate.slice(1)}
           </h2>
         </div>

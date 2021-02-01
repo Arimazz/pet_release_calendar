@@ -34,7 +34,7 @@ const Cells: FC<IProps> = ({rows, onDateClick}) => {
                   {isLoading && <Loading />}
                   {data && data.map((item: any) => (
                     <div key={item.name}>
-                      <span className={`game-title ${item.added > 5 && 'game-title-heavy'}`}>
+                      <span className={`game-title ${item.added >= 5 && 'game-title-heavy'}`}>
                         {item.name}
                       </span>
                     </div>
